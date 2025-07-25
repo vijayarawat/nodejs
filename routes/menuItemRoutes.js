@@ -1,10 +1,15 @@
 const express = require('express')
 const router = express.Router()
 
-
 const MenuItem = require('../models/MenuItem');
 
-router.post('/', async(req,res)=>{
+
+const logRequest = (req, res, next) => {
+    console.log(`${new Date().toLocaleString()} request made to: ${req.originalUrl}`);
+    next();
+};
+
+router.post('/', logRequest, async(req,res)=>{
 
     try{
         const data = req.body
@@ -20,11 +25,11 @@ router.post('/', async(req,res)=>{
 })
 
 
-router.get('/', async(req,res)=>{
+router.get('/', logRequest, async(req,res)=>{
 
     try{
         const response = await MenuItem.find();
-        console.log("Data fetched:", response);
+        console.log("Data fetched");
         res.status(200).json(response,"Hi");
     }
     catch(err){
@@ -36,4 +41,4 @@ router.get('/', async(req,res)=>{
 
 })
 
-moudule.exports = router
+module.exports = router

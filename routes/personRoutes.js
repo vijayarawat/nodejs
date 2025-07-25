@@ -1,10 +1,13 @@
 const express = require('express')
 const router = express.Router();
-
 const Person = require('../models/Person');
 
+const logRequest = (req, res, next) => {
+    console.log(`${new Date().toLocaleString()} request made to: ${req.originalUrl}`);
+    next();
+};
 
-router.post('/', async (req, res) => {
+router.post('/', logRequest, async (req, res) => {
     try {
         const data = req.body;
         const newPerson = new Person(data);
@@ -18,11 +21,11 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/',async(req,res)=>{
+router.get('/', logRequest, async(req,res)=>{
 
     try{
         const response = await Person.find();
-        console.log("Data fetched:", response);
+        console.log("Data fetched");
         res.status(200).json(response);
     }
     catch(err){
@@ -32,7 +35,7 @@ router.get('/',async(req,res)=>{
     }
 })
 
-router.get('/:workType', async(req,res)=>{
+router.get('/:workType', logRequest,  async(req,res)=>{
     try{
         const workType = req.params.workType
         if(workType =='chef' || workType == 'manager'||workType =='waiter'){
