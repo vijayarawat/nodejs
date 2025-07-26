@@ -3,13 +3,7 @@ const router = express.Router()
 
 const MenuItem = require('../models/MenuItem');
 
-
-const logRequest = (req, res, next) => {
-    console.log(`${new Date().toLocaleString()} request made to: ${req.originalUrl}`);
-    next();
-};
-
-router.post('/', logRequest, async(req,res)=>{
+router.post('/', async(req,res)=>{
 
     try{
         const data = req.body
@@ -25,7 +19,7 @@ router.post('/', logRequest, async(req,res)=>{
 })
 
 
-router.get('/', logRequest, async(req,res)=>{
+router.get('/', async(req,res)=>{
 
     try{
         const response = await MenuItem.find();

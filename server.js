@@ -1,14 +1,19 @@
+require('dotenv').config();
+console.log(process.env.JWT_SECRET);
 const express = require('express')
 const app = express()
-
 const db = require('./db')
+
+
+// require('./.env').config();
 const PORT = process.env.PORT  || 8000
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json());
 
-const Person = require('./models/Person');
-const MenuItem = require('./models/MenuItem');
+const passport = require('./auth')
+app.use(passport.initialize())
+
 
 // const logRequest = (req, res, next)=>{
 //     console.log('${new Date().toLocaleString()} request made to : ${req.originalUrl}')
@@ -19,9 +24,10 @@ const logRequest = (req, res, next) => {
     console.log(`${new Date().toLocaleString()} request made to: ${req.originalUrl}`);
     next();
 };
-// app.use('logRequest')
+app.use(logRequest)
 
-app.get('/',logRequest, function(req,res){
+const localAuthMiddleware = passport.authenticate('local',{session: false})
+app.get('/',localAuthMiddleware,logRequest, function(req,res){
     res.send("hello  welcom to node ")
 })
 
@@ -29,9 +35,13 @@ const personRoutes = require('./routes/personRoutes')
 app.use('/person',personRoutes)
 
 const menuItemRoutes = require('./routes/menuItemRoutes')
-app.use('/menu',menuItemRoutes)
+const Person = require('./models/Person')
+app.use('/menu',localAuthMiddleware,menuItemRoutes)
 
 
+// const Person = require('./models/Person');
+// const MenuItem = require('./models/MenuItem');
+// 
 // app.get('/chicken', (req,res)=>{
 //     res.send("Sure Vijaya I would love to do it.")
 // })
